@@ -136,7 +136,7 @@
     {/each}
   </div>
 
-  <p class="note">Les sièges de Frente Amplio et de Compromís sont additionnés. Podemos n'obtiendrait aucun siège. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne auprès de 1&nbsp;525 personnes. Source : Cluster 17 · Graphique : Le Grand Continent</p>
+  <p class="note">Les sièges de Frente Amplio et de Compromís sont additionnés. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne réalisée du 10 au 13 novembre 2026 auprès de 1&nbsp;525 personnes.<br>Source : Cluster 17<br>Graphique : Le Grand Continent</p>
 </div>
 
 <style>
