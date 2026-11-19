@@ -15,7 +15,7 @@
       { id: "pnv", name: "PNV", seats: 3, color: "#2E8B3A" },
       { id: "cc", name: "Coalición Canaria", seats: 1, color: "#FFD700" } ] },
     { id: "droite", name: t.blocs.droite, parties: [
-      { id: "pp", name: "PP", seats: 125, color: "#1D84CE" },
+      { id: "pp", name: "PP", seats: 125, color: "#1E4B8F" },
       { id: "vox", name: "Vox", seats: 65, color: "#63BE21" } ] }
   ];
   const PARTIES = BLOCS.flatMap((b) => b.parties.map((p) => ({ ...p, bloc: b.id })));
