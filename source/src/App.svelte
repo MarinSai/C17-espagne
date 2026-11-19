@@ -40,7 +40,7 @@
   const seatR = 15.8;
 
   // ── État ──
-  let selected = $state(new Set());
+  let selected = $state(new Set(PRESETS[0][1]));
   let hover = $state(null);
   let tip = $state(null);
   let chart;
