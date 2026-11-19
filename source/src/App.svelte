@@ -4,7 +4,7 @@
   // Ordre gauche → droite de l'hémicycle (les partis régionalistes occupent le « quesito » central)
   const BLOCS = [
     { id: "gauche", name: "Gauche", parties: [
-      { id: "fa", name: "Frente Amplio – Compromís", seats: 9, color: "#EF4B91" },
+      { id: "fa", name: "Frente Amplio et Compromís", seats: 9, color: "#EF4B91" },
       { id: "psoe", name: "PSOE", seats: 120, color: "#EF1C27" } ] },
     { id: "reg", name: "Partis régionalistes et indépendantistes", parties: [
       { id: "erc", name: "ERC", seats: 10, color: "#FFB232" },
@@ -25,15 +25,16 @@
     ["PP + Vox", ["pp", "vox"]],
     ["PP seul", ["pp"]],
     ["Bloc d'investiture de Sánchez (2023)", ["fa", "psoe", "erc", "bildu", "bng", "junts", "pnv", "cc"]],
-    ["PSOE, Frente Amplio, ERC, Bildu, BNG", ["fa", "psoe", "erc", "bildu", "bng"]],
+    ["PSOE, gauche, ERC, EH Bildu, BNG", ["fa", "psoe", "erc", "bildu", "bng"]],
     ["Grande coalition PP-PSOE", ["pp", "psoe"]],
     ["Tout effacer", []]
   ];
 
   // ── Géométrie : positions réelles des 350 sièges de l'hémicycle (d'après le schéma de Wikipédia,
   //    sièges de la Mesa retirés), remplies par angle depuis le bas du fer à cheval, de gauche à droite ──
-  const CX = 766, CY = 1165;
-  const seats = POS.map(([x, y]) => ({ x, y, a: Math.atan2(CY - y, x - CX), d: Math.hypot(x - CX, y - CY) }));
+  const CX = 766, CY = 600;
+  const ang = (x, y) => { const a = Math.atan2(CY - y, x - CX); return a < -Math.PI / 2 ? a + 2 * Math.PI : a; };
+  const seats = POS.map(([x, y]) => ({ x, y, a: ang(x, y), d: Math.hypot(x - CX, y - CY) }));
   seats.sort((p, q) => q.a - p.a || q.d - p.d);
   let k = 0;
   PARTIES.forEach((p) => { for (let i = 0; i < p.seats; i++) seats[k++].party = p; });
@@ -47,6 +48,7 @@
 
   const sel = $derived(PARTIES.filter((p) => selected.has(p.id)));
   const n = $derived(sum(sel, (p) => p.seats));
+  const isActive = (ids) => ids.length > 0 && ids.length === selected.size && ids.every((id) => selected.has(id));
 
   function toggle(id) {
     const s = new Set(selected);
@@ -55,12 +57,15 @@
   }
   function opacity(d) {
     if (hover) return d.party === hover ? 1 : selected.has(d.party.id) ? 0.55 : 0.12;
-    return selected.size === 0 || selected.has(d.party.id) ? 1 : 0.15;
+    return selected.size === 0 || selected.has(d.party.id) ? 1 : 0.25;
   }
   function enter(e, d) {
     hover = d.party;
     const b = chart.getBoundingClientRect(), s = e.target.getBoundingClientRect();
-    tip = { text: `${d.party.name} · ${d.party.seats} siège${d.party.seats > 1 ? "s" : ""}`, x: s.left + s.width / 2 - b.left, y: s.top - b.top };
+    const text = `${d.party.name} · ${d.party.seats} siège${d.party.seats > 1 ? "s" : ""}`;
+    const half = Math.min(text.length * 3.6 + 10, b.width / 2);
+    const x = Math.max(half, Math.min(b.width - half, s.left + s.width / 2 - b.left));
+    tip = { text, x, y: s.top - b.top };
   }
   function leave() { hover = null; tip = null; }
 
@@ -91,12 +96,12 @@
         <circle class="seat" cx={d.x} cy={d.y} r={seatR} fill={d.party.color} opacity={opacity(d)}
           onpointerenter={(e) => enter(e, d)} onpointerleave={leave} onclick={() => toggle(d.party.id)} />
       {/each}
-      <text class="n" x={CX} y="1010" text-anchor="middle">{n}</text>
+      <text class="n" x={CX} y="1010" text-anchor="middle">{selected.size ? n : "–"}</text>
     </svg>
     {#if tip}<div class="tip" style="left:{tip.x}px;top:{tip.y}px">{tip.text}</div>{/if}
   </div>
 
-  <p class="status">
+  <p class="status" aria-live="polite">
     {#if selected.size === 0}Sélectionnez des partis ou un scénario
     {:else if n >= MAJ}<b>Majorité absolue atteinte</b> ({n - MAJ} siège{n - MAJ > 1 ? "s" : ""} de marge)
     {:else}Il manque <b>{MAJ - n}</b> siège{MAJ - n > 1 ? "s" : ""} pour la majorité absolue{/if}
@@ -112,7 +117,7 @@
   <div class="presets">
     <span class="lab">Scénarios</span>
     {#each PRESETS as [label, ids]}
-      <button type="button" onclick={() => (selected = new Set(ids))}>{label}</button>
+      <button type="button" class="preset" aria-pressed={ids.length ? isActive(ids) : undefined} onclick={() => (selected = new Set(ids))}>{label}</button>
     {/each}
   </div>
 
@@ -131,7 +136,7 @@
     {/each}
   </div>
 
-  <p class="note">Podemos n'obtiendrait aucun siège. Enquête en ligne auprès de 1 525 personnes. Source : Cluster 17 · Graphique : Le Grand Continent</p>
+  <p class="note">Les sièges de Frente Amplio et de Compromís sont additionnés. Podemos n'obtiendrait aucun siège. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne auprès de 1&nbsp;525 personnes. Source : Cluster 17 · Graphique : Le Grand Continent</p>
 </div>
 
 <style>
@@ -150,7 +155,7 @@
   .dek { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 62ch; }
   .chart { position: relative; max-width: 520px; width: 100%; margin: 0 auto; }
   svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .seat { transition: opacity 0.25s; cursor: pointer; }
+  .seat { transition: opacity 0.25s; cursor: pointer; stroke: rgba(0, 0, 0, 0.18); stroke-width: 1.5; }
   .n { font-family: var(--font-display); font-weight: 600; font-size: 170px; fill: var(--fg); font-variant-numeric: tabular-nums; pointer-events: none; }
   .status { text-align: center; font-size: 14px; color: var(--muted); margin: -6px 0 6px; }
   .status b { color: var(--fg); }
@@ -163,6 +168,7 @@
   .presets .lab { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; font-weight: 600; margin-right: 4px; }
   button { font: inherit; cursor: pointer; color: var(--fg); background: var(--chip); border: 1px solid var(--rule); border-radius: 999px; padding: 5px 12px; }
   button:hover { border-color: var(--muted); }
+  .preset[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
   button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .blocs { display: grid; gap: 14px; }
   .bloc h2 { font-size: 13px; font-weight: 600; margin: 0 0 8px; display: flex; justify-content: space-between; gap: 8px; }
@@ -171,7 +177,7 @@
   .chip { display: flex; align-items: center; gap: 7px; border-radius: 4px; padding: 5px 9px; font-size: 13.5px; }
   .chip .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
   .chip .k { font-variant-numeric: tabular-nums; color: var(--muted); }
-  .chip[aria-pressed="false"] { opacity: 0.5; }
+  .chip[aria-pressed="false"] { color: var(--muted); }
   .chip[aria-pressed="false"] .dot { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--muted); }
   .note { font-size: 12.5px; color: var(--muted); line-height: 1.5; border-top: 1px solid var(--rule); padding-top: 12px; margin: 0; }
   .tip { position: absolute; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: 4px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -130%); }
