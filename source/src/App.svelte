@@ -1,19 +1,20 @@
 <script>
   import POS from "./seats.json";
+  import t from "./i18n.js";
   // ── Données : projection en sièges Cluster 17 (enquête du 10 au 13 novembre 2026) ──
   // Ordre gauche → droite de l'hémicycle (les partis régionalistes occupent le « quesito » central)
   const BLOCS = [
-    { id: "gauche", name: "Gauche", parties: [
-      { id: "fa", name: "Frente Amplio et Compromís", seats: 9, color: "#EF4B91" },
+    { id: "gauche", name: t.blocs.gauche, parties: [
+      { id: "fa", name: t.fa, seats: 9, color: "#EF4B91" },
       { id: "psoe", name: "PSOE", seats: 120, color: "#EF1C27" } ] },
-    { id: "reg", name: "Partis régionalistes et indépendantistes", parties: [
+    { id: "reg", name: t.blocs.reg, parties: [
       { id: "erc", name: "ERC", seats: 10, color: "#FFB232" },
       { id: "bildu", name: "EH Bildu", seats: 8, color: "#B5CF18" },
       { id: "bng", name: "BNG", seats: 3, color: "#ADCFEF" },
       { id: "junts", name: "Junts", seats: 6, color: "#00C7AE" },
       { id: "pnv", name: "PNV", seats: 3, color: "#2E8B3A" },
       { id: "cc", name: "Coalición Canaria", seats: 1, color: "#FFD700" } ] },
-    { id: "droite", name: "Droite", parties: [
+    { id: "droite", name: t.blocs.droite, parties: [
       { id: "pp", name: "PP", seats: 125, color: "#1D84CE" },
       { id: "vox", name: "Vox", seats: 65, color: "#63BE21" } ] }
   ];
@@ -22,12 +23,12 @@
   const TOTAL = sum(PARTIES, (p) => p.seats), MAJ = 176;
   // Scénarios évoqués dans la campagne et dans l'enquête Cluster 17
   const PRESETS = [
-    ["PP + Vox", ["pp", "vox"]],
-    ["PP seul", ["pp"]],
-    ["Bloc d'investiture de Sánchez (2023)", ["fa", "psoe", "erc", "bildu", "bng", "junts", "pnv", "cc"]],
-    ["PSOE, gauche, ERC, EH Bildu, BNG", ["fa", "psoe", "erc", "bildu", "bng"]],
-    ["Grande coalition PP-PSOE", ["pp", "psoe"]],
-    ["Tout effacer", []]
+    [t.presets[0], ["pp", "vox"]],
+    [t.presets[1], ["pp"]],
+    [t.presets[2], ["fa", "psoe", "erc", "bildu", "bng", "junts", "pnv", "cc"]],
+    [t.presets[3], ["fa", "psoe", "erc", "bildu", "bng"]],
+    [t.presets[4], ["pp", "psoe"]],
+    [t.presets[5], []]
   ];
 
   // ── Géométrie : positions réelles des 350 sièges de l'hémicycle (d'après le schéma de Wikipédia,
@@ -62,7 +63,7 @@
   function enter(e, d) {
     hover = d.party;
     const b = chart.getBoundingClientRect(), s = e.target.getBoundingClientRect();
-    const text = `${d.party.name} · ${d.party.seats} siège${d.party.seats > 1 ? "s" : ""}`;
+    const text = `${d.party.name} · ${t.seats(d.party.seats)}`;
     const half = Math.min(text.length * 3.6 + 10, b.width / 2);
     const x = Math.max(half, Math.min(b.width - half, s.left + s.width / 2 - b.left));
     tip = { text, x, y: s.top - b.top };
@@ -86,11 +87,11 @@
 </script>
 
 <div class="wrap" data-iframe-size data-iframe-height>
-  <h1>Le PP et Vox obtiendraient ensemble la majorité absolue</h1>
-  <p class="dek">Projection de la répartition des 350 sièges du Congrès des députés, d'après l'enquête Cluster 17 réalisée du 10 au 13 novembre 2026.</p>
+  <h1>{t.title}</h1>
+  <p class="dek">{t.dek}</p>
 
   <div class="chart" bind:this={chart}>
-    <svg viewBox="15 25 1503 1150" role="img" aria-label="Hémicycle du Congrès des députés, 350 sièges">
+    <svg viewBox="15 25 1503 1150" role="img" aria-label={t.aria}>
       {#each seats as d}
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <circle class="seat" cx={d.x} cy={d.y} r={seatR} fill={d.party.color} opacity={opacity(d)}
@@ -102,20 +103,20 @@
   </div>
 
   <p class="status" aria-live="polite">
-    {#if selected.size === 0}Sélectionnez des partis ou un scénario
-    {:else if n >= MAJ}<b>Majorité absolue atteinte</b> ({n - MAJ} siège{n - MAJ > 1 ? "s" : ""} de marge)
-    {:else}Il manque <b>{MAJ - n}</b> siège{MAJ - n > 1 ? "s" : ""} pour la majorité absolue{/if}
+    {#if selected.size === 0}{t.select}
+    {:else if n >= MAJ}{@html t.reached(n - MAJ)}
+    {:else}{@html t.missing(MAJ - n)}{/if}
   </p>
   <div class="bar">
     <div class="fill" style="width:{(n / TOTAL) * 100}%">
       {#each sel as p (p.id)}<span style="background:{p.color};width:{n ? (p.seats / n) * 100 : 0}%"></span>{/each}
     </div>
     <div class="maj" style="left:{(MAJ / TOTAL) * 100}%"></div>
-    <div class="majl" style="left:{(MAJ / TOTAL) * 100}%">Majorité absolue : {MAJ}</div>
+    <div class="majl" style="left:{(MAJ / TOTAL) * 100}%">{t.maj(MAJ)}</div>
   </div>
 
   <div class="presets">
-    <span class="lab">Scénarios</span>
+    <span class="lab">{t.scenarios}</span>
     {#each PRESETS as [label, ids]}
       <button type="button" class="preset" aria-pressed={ids.length ? isActive(ids) : undefined} onclick={() => (selected = new Set(ids))}>{label}</button>
     {/each}
@@ -124,7 +125,7 @@
   <div class="blocs">
     {#each BLOCS as b}
       <div class="bloc">
-        <h2>{b.name}<span>{sum(b.parties, (p) => p.seats)} sièges</span></h2>
+        <h2>{b.name}<span>{t.seats(sum(b.parties, (p) => p.seats))}</span></h2>
         <div class="chips">
           {#each b.parties as p}
             <button type="button" class="chip" aria-pressed={selected.has(p.id)} onclick={() => toggle(p.id)}>
@@ -136,7 +137,7 @@
     {/each}
   </div>
 
-  <p class="note">Les sièges de Frente Amplio et de Compromís sont additionnés. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne réalisée du 10 au 13 novembre 2026 auprès de 1&nbsp;525 personnes.<br>Source : Cluster 17<br>Graphique : Le Grand Continent</p>
+  <p class="note">{@html t.note}</p>
 </div>
 
 <style>
