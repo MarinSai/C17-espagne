@@ -13,7 +13,7 @@ const fr = {
   reached: (m) => `<b>Majorité absolue atteinte</b> (${m} siège${m > 1 ? "s" : ""} de marge)`,
   missing: (m) => `Il manque <b>${m}</b> siège${m > 1 ? "s" : ""} pour la majorité absolue`,
   maj: (k) => `Majorité absolue : ${k}`,
-  note: "Les sièges de Frente Amplio et de Compromís sont additionnés. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne réalisée du 10 au 13 novembre 2026 auprès de 1&nbsp;525 personnes.<br>Source : Cluster 17<br>Graphique : Le Grand Continent"
+  note: "Les sièges de Frente Amplio et de Compromís sont additionnés. Au second vote d'investiture, la majorité simple suffit. Enquête en ligne réalisée du 10 au 13 novembre 2026 auprès de 1&nbsp;525 personnes.<br>Source : Cluster 17 · Graphique : Le Grand Continent"
 };
 const es = {
   lang: "es",
@@ -29,7 +29,7 @@ const es = {
   reached: (m) => `<b>Mayoría absoluta alcanzada</b> (${m} escaño${m > 1 ? "s" : ""} de margen)`,
   missing: (m) => `${m > 1 ? "Faltan" : "Falta"} <b>${m}</b> escaño${m > 1 ? "s" : ""} para la mayoría absoluta`,
   maj: (k) => `Mayoría absoluta: ${k}`,
-  note: "Los escaños de Frente Amplio y Compromís se suman. En la segunda votación de investidura basta la mayoría simple. Encuesta en línea realizada del 10 al 13 de noviembre de 2026 a 1.525 personas.<br>Fuente: Cluster 17<br>Gráfico: El Grand Continent"
+  note: "Los escaños de Frente Amplio y Compromís se suman. En la segunda votación de investidura basta la mayoría simple. Encuesta en línea realizada del 10 al 13 de noviembre de 2026 a 1.525 personas.<br>Fuente: Cluster 17 · Gráfico: El Grand Continent"
 };
 const it = {
   lang: "it",
@@ -45,6 +45,6 @@ const it = {
   reached: (m) => `<b>Maggioranza assoluta raggiunta</b> (${m} segg${m > 1 ? "i" : "io"} di margine)`,
   missing: (m) => `${m > 1 ? "Mancano" : "Manca"} <b>${m}</b> segg${m > 1 ? "i" : "io"} alla maggioranza assoluta`,
   maj: (k) => `Maggioranza assoluta: ${k}`,
-  note: "I seggi di Frente Amplio e Compromís sono sommati. Alla seconda votazione di investitura basta la maggioranza semplice. Sondaggio online realizzato dal 10 al 13 novembre 2026 su 1.525 persone.<br>Fonte: Cluster 17<br>Grafico: Il Grand Continent"
+  note: "I seggi di Frente Amplio e Compromís sono sommati. Alla seconda votazione di investitura basta la maggioranza semplice. Sondaggio online realizzato dal 10 al 13 novembre 2026 su 1.525 persone.<br>Fonte: Cluster 17 · Grafico: Il Grand Continent"
 };
 export default { fr, es, it }[__LANG__] ?? fr;
