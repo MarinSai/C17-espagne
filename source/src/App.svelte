@@ -11,7 +11,7 @@
       { id: "bildu", name: "EH Bildu", seats: 8, color: "#B5CF18" },
       { id: "bng", name: "BNG", seats: 3, color: "#ADCFEF" },
       { id: "junts", name: "Junts", seats: 6, color: "#00C7AE" },
-      { id: "pnv", name: "PNV", seats: 3, color: "#4AAE4A" },
+      { id: "pnv", name: "PNV", seats: 3, color: "#2E8B3A" },
       { id: "cc", name: "Coalición Canaria", seats: 1, color: "#FFD700" } ] },
     { id: "droite", name: "Droite", parties: [
       { id: "pp", name: "PP", seats: 125, color: "#1D84CE" },
@@ -86,7 +86,7 @@
 </script>
 
 <div class="wrap" data-iframe-size data-iframe-height>
-  <h1>Le PP et Vox obtiendraient la majorité absolue</h1>
+  <h1>Le PP et Vox obtiendraient ensemble la majorité absolue</h1>
   <p class="dek">Projection de la répartition des 350 sièges du Congrès des députés, d'après l'enquête Cluster 17 réalisée du 10 au 13 novembre 2026.</p>
 
   <div class="chart" bind:this={chart}>
